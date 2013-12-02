@@ -12,12 +12,13 @@
 /*
 Prévoir un panneau d'administration pour générer la carte à partir d'une adresse
 Possibilité d'enregistrer plusieurs cartes.
-
+Afficher un apperçu automatique lors de la saisie d'adresse...
 */
 
 /* Initialisation */
 add_action('init', 'eliemaps_init');
 add_action('add_meta_boxes', 'eliemaps_metabox');
+add_action('save_post', 'eliemaps_savepost', 10,2);
 
 /* Permet d'initialiser le panneau d'administration des cartes */
 function eliemaps_init(){
@@ -44,15 +45,26 @@ function eliemaps_init(){
 		));
 }
 
+/* Création d'une métabox pour les champs personnalisés */
 function eliemaps_metabox(){
 	add_meta_box('adresse', 'Adresse', 'eliemaps_metabox_adresse', 'eliemaps');
 }
 
-function eliemaps_metabox_adresse($id){
+/* Création du champs personnalisé : "Adresse" */
+function eliemaps_metabox_adresse($object){
 	?>
 	<label>Adresse:</label>
-	<input name="adresse" value="<?php echo $adresse; ?>" style="width:100%"/>
+	<input type="text" name="eliemaps_adresse" value="<?php echo esc_attr(get_post_meta($object->ID, '_adresse', TRUE)); ?>" style="width:100%"/>
 	<?php
+}
+
+/* Enregistrement des valeurs saisies */
+function eliemaps_savepost($post_id, $post){
+	if(!isset($_POST['eliemaps_adresse'])) {
+		return $post_id;
+	}
+
+	update_post_meta($post_id, '_adresse', $_POST['eliemaps_adresse']);
 }
 
 /* Affichage de la carte */
