@@ -57,24 +57,45 @@ function eliemaps_metabox_adresse($object){
 	//Création de l'url de la carte Google Maps
 	$url = "http://maps.googleapis.com/maps/api/staticmap?center=";
 	$url = $url . rawurlencode(get_post_meta($object->ID, '_adresse', TRUE));
-	$url = $url . "&zoom=15&size=400x400&sensor=false";
+	$url = $url . "&zoom=" . get_post_meta($object->ID, '_zoom', TRUE);
+	$url = $url . "&size=" . get_post_meta($object->ID, '_format', TRUE);
+	$url = $url . "&sensor=false";
 	
 	?>
 	<label>Adresse:</label>
 	<input type="text" name="eliemaps_adresse" value="<?php echo esc_attr(get_post_meta($object->ID, '_adresse', TRUE)); ?>" style="width:100%"/>
 
-	<label>Carte:</label>
+	<?php /* ajouter la préselection du format choisi */ ?>
+	<label>Format:</label>
+	<select name="eliemaps_format">
+		<option value = "200x200">Miniature (200x200)</option>
+		<option value = "400x400">Standard (400x400)</option>
+		<option value = "800x400">Large (800x400)</option>
+		<option value = "800x200">Bannière (800x200)</option>
+	</select>
+
+	<?php /* ajouter la préselection du zoom choisi
+			 possibilité d'ajouter une échelle... */ ?>
+	<label>Adresse:</label>
+	<input type="range" name="eliemaps_zoom" min="12" max="16")/>
+
 	<img src="<?php echo $url; ?>"></img>
 	<?php
 }
 
 /* Enregistrement des valeurs saisies */
 function eliemaps_savepost($post_id, $post){
-	if(!isset($_POST['eliemaps_adresse'])) {
-		return $post_id;
+	if(isset($_POST['eliemaps_adresse'])) {
+		update_post_meta($post_id, '_adresse', $_POST['eliemaps_adresse']);
 	}
 
-	update_post_meta($post_id, '_adresse', $_POST['eliemaps_adresse']);
+	if(isset($_POST['eliemaps_format'])) {
+		update_post_meta($post_id, '_format', $_POST['eliemaps_format']);
+	}
+
+	if(isset($_POST['eliemaps_zoom'])) {
+		update_post_meta($post_id, '_zoom', $_POST['eliemaps_zoom']);
+	}
 }
 
 /* Affichage de la carte */
