@@ -48,23 +48,14 @@ function eliemaps_init(){
 
 /* Création d'une métabox pour les champs personnalisés */
 function eliemaps_metabox(){
-	add_meta_box('adresse', 'Adresse', 'eliemaps_metabox_adresse', 'eliemaps');
-	/* ajouter un emplacement pour visualiser la carte */
+	add_meta_box('marqueurs', 'Marqueurs', 'eliemaps_metabox_marqueurs', 'eliemaps');
+	add_meta_box('format', 'Format', 'eliemaps_metabox_format', 'eliemaps');
+	add_meta_box('carte', 'Carte', 'eliemaps_metabox_carte', 'eliemaps');
 }
 
-/* Création du champs personnalisé : "Adresse" et affichage de la carte */
-function eliemaps_metabox_adresse($object){
-	//Création de l'url de la carte Google Maps
-	$url = "http://maps.googleapis.com/maps/api/staticmap?center=";
-	$url = $url . rawurlencode(get_post_meta($object->ID, '_adresse', TRUE));
-	$url = $url . "&zoom=" . get_post_meta($object->ID, '_zoom', TRUE);
-	$url = $url . "&size=" . get_post_meta($object->ID, '_format', TRUE);
-	$url = $url . "&sensor=false";
-	
+/* Création du champs personnalisé : "Adresse" */
+function eliemaps_metabox_format($object){
 	?>
-	<label>Adresse:</label>
-	<input type="text" name="eliemaps_adresse" value="<?php echo esc_attr(get_post_meta($object->ID, '_adresse', TRUE)); ?>" style="width:100%"/>
-
 	<?php 
 	/* Table des formats disponibles */
 	$format = array(
@@ -92,15 +83,65 @@ function eliemaps_metabox_adresse($object){
 	<?php /* possibilité d'ajouter une échelle... */ ?>
 	<label>Zoom:</label>
 	<input type="range" name="eliemaps_zoom" min="12" max="16" value="<?php echo get_post_meta($object->ID, '_zoom', TRUE); ?>")/>
+	<?php
+}
 
+/* Création du champs personnalisé : "Adresse" */
+function eliemaps_metabox_marqueurs($object){
+	?>
+	<fieldset>
+		<label>Adresse 1:</label>
+		<input type="text" name="eliemaps_adresse_1" value="<?php echo esc_attr(get_post_meta($object->ID, '_adresse_1', TRUE)); ?>" style="width:100%"/>
+		<label>Nom:</label>
+		<input type="text" name="eliemaps_nom_1" value="<?php echo esc_attr(get_post_meta($object->ID, '_nom_1', TRUE)); ?>"/>
+		<label>Couleur:</label>
+		<input type="color" name="eliemaps_couleur_1" value="<?php echo esc_attr(get_post_meta($object->ID, '_couleur_1', TRUE)); ?>"/>
+	</fieldset>
+
+	<fieldset>
+		<label>Adresse 2:</label>
+		<input type="text" name="eliemaps_adresse_2" value="<?php echo esc_attr(get_post_meta($object->ID, '_adresse_2', TRUE)); ?>" style="width:100%"/>
+	</fieldset>
+	<?php
+}
+
+/* Création et affichage de la carte en fonction des paramètres choisis */
+function eliemaps_metabox_carte($object){
+	//Création de l'url de la carte Google Maps
+	$url = "http://maps.googleapis.com/maps/api/staticmap?center=";
+	$url = $url . rawurlencode(get_post_meta($object->ID, '_adresse_1', TRUE));
+	$url = $url . "&zoom=" . get_post_meta($object->ID, '_zoom', TRUE);
+	$url = $url . "&size=" . get_post_meta($object->ID, '_format', TRUE);
+	$url = $url . "&markers=color:" . get_post_meta($object->ID, '_couleur_1', TRUE)
+			 . "%7Clabel:" . get_post_meta($object->ID, '_nom_1', TRUE)
+			 . "%7C" . rawurlencode(get_post_meta($object->ID, '_adresse_1', TRUE));
+	$url = $url . "&sensor=false";
+
+	?>
 	<img src="<?php echo $url; ?>"></img>
 	<?php
 }
 
 /* Enregistrement des valeurs saisies */
 function eliemaps_savepost($post_id, $post){
-	if(isset($_POST['eliemaps_adresse'])) {
-		update_post_meta($post_id, '_adresse', $_POST['eliemaps_adresse']);
+	if(isset($_POST['eliemaps_adresse_1'])) {
+		update_post_meta($post_id, '_adresse_1', $_POST['eliemaps_adresse_1']);
+	}
+
+	if(isset($_POST['eliemaps_nom_1'])) {
+		update_post_meta($post_id, '_nom_1', $_POST['eliemaps_nom_1']);
+	}
+
+	if (isset($_POST['eliemaps_couleur_1'])) {
+		update_post_meta($post_id, '_couleur_1', $_POST['eliemaps_couleur_1']);
+	}
+
+	if(isset($_POST['eliemaps_adresse_2'])) {
+		update_post_meta($post_id, '_adresse_2', $_POST['eliemaps_adresse_2']);
+	}
+
+	if (isset($_POST['eliemaps_couleur_2'])) {
+		update_post_meta($post_id, '_couleur_2', $_POST['eliemaps_couleur_2']);
 	}
 
 	if(isset($_POST['eliemaps_format'])) {
