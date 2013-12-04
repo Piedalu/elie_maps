@@ -13,6 +13,7 @@
 Prévoir un panneau d'administration pour générer la carte à partir d'une adresse
 Possibilité d'enregistrer plusieurs cartes.
 Afficher un apperçu automatique lors de la saisie d'adresse...
+Améliorer la sécurité du plugin
 */
 
 /* Initialisation */
@@ -48,13 +49,22 @@ function eliemaps_init(){
 /* Création d'une métabox pour les champs personnalisés */
 function eliemaps_metabox(){
 	add_meta_box('adresse', 'Adresse', 'eliemaps_metabox_adresse', 'eliemaps');
+	/* ajouter un emplacement pour visualiser la carte */
 }
 
-/* Création du champs personnalisé : "Adresse" */
+/* Création du champs personnalisé : "Adresse" et affichage de la carte */
 function eliemaps_metabox_adresse($object){
+	//Création de l'url de la carte Google Maps
+	$url = "http://maps.googleapis.com/maps/api/staticmap?center=";
+	$url = $url . rawurlencode(get_post_meta($object->ID, '_adresse', TRUE));
+	$url = $url . "&zoom=15&size=400x400&sensor=false";
+	
 	?>
 	<label>Adresse:</label>
 	<input type="text" name="eliemaps_adresse" value="<?php echo esc_attr(get_post_meta($object->ID, '_adresse', TRUE)); ?>" style="width:100%"/>
+
+	<label>Carte:</label>
+	<img src="<?php echo $url; ?>"></img>
 	<?php
 }
 
