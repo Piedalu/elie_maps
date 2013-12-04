@@ -10,10 +10,10 @@
 
 
 /*
-Prévoir un panneau d'administration pour générer la carte à partir d'une adresse
 Possibilité d'enregistrer plusieurs cartes.
-Afficher un apperçu automatique lors de la saisie d'adresse...
-Améliorer la sécurité du plugin
+Ajouter un paramètre (ID de la carte enregistrée) lors de l'appel de la fonction d'affichage
+Afficher un aperçu automatique lors de la saisie d'adresse...
+Améliorer la sécurité du plugin (vérifier les autorisations, insérer un "nonce"...)
 */
 
 /* Initialisation */
@@ -65,19 +65,33 @@ function eliemaps_metabox_adresse($object){
 	<label>Adresse:</label>
 	<input type="text" name="eliemaps_adresse" value="<?php echo esc_attr(get_post_meta($object->ID, '_adresse', TRUE)); ?>" style="width:100%"/>
 
-	<?php /* ajouter la préselection du format choisi */ ?>
+	<?php 
+	/* Table des formats disponibles */
+	$format = array(
+		'200x200' => 'Miniature (200x200)',
+		'400x400' => 'Standard (400x400)',
+		'800x400' => 'Large (800x400)',
+		'800x200' => 'Bannière (800x200)'
+		);
+	?>
 	<label>Format:</label>
 	<select name="eliemaps_format">
-		<option value = "200x200">Miniature (200x200)</option>
-		<option value = "400x400">Standard (400x400)</option>
-		<option value = "800x400">Large (800x400)</option>
-		<option value = "800x200">Bannière (800x200)</option>
+		<?php
+		foreach ($format as $valeur => $nom) {
+			$option = '<option value = "' . $valeur . '"';
+			if ($valeur == get_post_meta($object->ID, '_format', TRUE)) {
+				$option = $option . 'selected';
+			}
+			$option = $option . '>' . $nom . '</option>';
+
+			echo $option;	
+		}
+		?>
 	</select>
 
-	<?php /* ajouter la préselection du zoom choisi
-			 possibilité d'ajouter une échelle... */ ?>
-	<label>Adresse:</label>
-	<input type="range" name="eliemaps_zoom" min="12" max="16")/>
+	<?php /* possibilité d'ajouter une échelle... */ ?>
+	<label>Zoom:</label>
+	<input type="range" name="eliemaps_zoom" min="12" max="16" value="<?php echo get_post_meta($object->ID, '_zoom', TRUE); ?>")/>
 
 	<img src="<?php echo $url; ?>"></img>
 	<?php
