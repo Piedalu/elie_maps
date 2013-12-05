@@ -110,6 +110,7 @@ function eliemaps_metabox_marqueurs($object){
 		<input type="text" name="eliemaps_nom_1" value="<?php echo esc_attr(get_post_meta($object->ID, '_nom_1', TRUE)); ?>"/>
 		(1 lettre majuscule - facultatif)</br>
 		<label>Couleur:</label>
+		<?php /* Note : La balise <input type="color" n'est optimisée actuellement que pour Chrome et Opera */ ?>
 		<input type="color" name="eliemaps_couleur_1" value="<?php echo esc_attr(get_post_meta($object->ID, '_couleur_1', TRUE)); ?>"/>
 		(au format 0xFFFFFF ou une couleur standard en anglais - facultatif)
 	</p>
@@ -152,6 +153,11 @@ function eliemaps_metabox_carte($object){
 
 	$url = $url . "&sensor=false";
 
+	/* sauvegarde de l'URL de la carte */
+	?>
+	<input type="hidden" name="eliemaps_url" value="<?php echo $url; ?>"/>
+	<?php
+
 	/* Affichage */
 	?>
 	<img src="<?php echo $url; ?>"></img>
@@ -192,12 +198,31 @@ function eliemaps_savepost($post_id, $post){
 	if(isset($_POST['eliemaps_zoom'])) {
 		update_post_meta($post_id, '_zoom', $_POST['eliemaps_zoom']);
 	}
+
+	if(isset($_POST['eliemaps_url'])) {
+		update_post_meta($post_id, '_url', $_POST['eliemaps_url']);
+	}
 }
 
 
-/* Affichage de la carte */
-function eliemaps_affiche(){
-	echo 'Ma carte sera ici !';
+/* Affichage de la carte 
+Ne fonctionne pas pour l'instant...*/
+function eliemaps_affiche($titre = ''){
+	$requete = new WP_query('post_type=eliemaps');
+	
+	if ($requete->have_posts()) {
+		$liste = $requete->get_posts();
+		echo print_r($liste[0]);
+		echo '<br/>url : ' . get_post_custom_values('eliemaps_url', $liste[0]);
+	/*	$carte = get_post($requete->the_post);
+	echo print_r($carte);*/
+	?>
+	<img src="<?php echo get_post_custom_values('eliemaps_url', $requete->the_post); ?>"></img>
+	<?php
+	}
+	else {
+		echo "<label>Vous devez d'abord créer une carte pour pouvoir l'afficher</label>";
+	}
 }
 
 
