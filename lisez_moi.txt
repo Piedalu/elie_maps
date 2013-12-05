@@ -1,0 +1,21 @@
+Plugin eliemaps v 1.0  |
+Elie Deilhes - 2013    |
+_______________________|
+
+Permet de générer des cartes statiques de type "Google Maps" pour votre site Wordpress
+Après avoir installé le plugin, vous avez accès à un nouveau panneau d'administration "Eliemaps"
+Vous pouvez générer vos propres cartes en entrant simplement une adresse (la carte est centrée sur la première adresse)
+
+Vous pouvez également personnaliser vos cartes en personnalisant un ou deux pointeurs, en choisissant un grossissement et une taille de carte (4 formats disponibles)
+
+Actuellement, le plugin ne permet d'afficher qu'une seulle carte sur votre site (par défaut, la première carte publiée)
+Vous pouvez cependant stocker plusieurs cartes en mode "brouillon" pour les afficher le moment venu !
+
+Pour afficher votre carte, il faut faire appel à la fonction : eliemaps_affiche()
+
+
+
+Dans la prochaine version :
+- Possibilité d'afficher une carte de son choix en précisant le nom de la carte dans les paramètres de la fonction eliemaps_affiche()
+- Possibilité d'ajouter plus de 2 marqueurs sur la carte
+- Possibilité de ne pas placer de marqueur au centre de la carte
