@@ -26,6 +26,8 @@ ED 2013/12/04
 add_action('init', 'eliemaps_init');
 add_action('add_meta_boxes', 'eliemaps_metabox');
 add_action('save_post', 'eliemaps_savepost', 10,2);
+add_action('manage_edit-eliemaps_columns', 'eliemaps_edit_columns');
+add_action('manage_posts_custom_column', 'eliemaps_column');
 
 
 /* Permet d'initialiser le panneau d'administration des cartes */
@@ -201,6 +203,23 @@ function eliemaps_savepost($post_id, $post){
 
 	if(isset($_POST['eliemaps_url'])) {
 		update_post_meta($post_id, '_url', $_POST['eliemaps_url']);
+	}
+}
+
+
+/* Réorganisation des colonnes dans la section administration : ajout de la colonne "Carte" juste après le titre */
+function eliemaps_edit_columns($columns) {
+	$colonne = array('carte' => 'Carte');
+	$columns = array_slice($columns, 0,2) + $colonne + array_slice($columns, 2, null);
+	return $columns;
+}
+
+
+function eliemaps_column($column) {
+	global $post;
+	if($column == 'carte'){
+		$url =  get_post_custom_values('_url', $post->ID)[0];
+		echo '<img src="' . $url . '"></img>';
 	}
 }
 
