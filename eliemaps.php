@@ -205,19 +205,15 @@ function eliemaps_savepost($post_id, $post){
 }
 
 
-/* Affichage de la carte 
-Ne fonctionne pas pour l'instant...*/
+/* Affichage de la carte */
 function eliemaps_affiche($titre = ''){
 	$requete = new WP_query('post_type=eliemaps');
 	
 	if ($requete->have_posts()) {
 		$liste = $requete->get_posts();
-		echo print_r($liste[0]);
-		echo '<br/>url : ' . get_post_custom_values('eliemaps_url', $liste[0]);
-	/*	$carte = get_post($requete->the_post);
-	echo print_r($carte);*/
+		$url = get_post_custom_values('_url', $liste[0]->ID)[0];
 	?>
-	<img src="<?php echo get_post_custom_values('eliemaps_url', $requete->the_post); ?>"></img>
+	<img src="<?php echo $url; ?>"></img>
 	<?php
 	}
 	else {
