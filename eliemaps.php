@@ -2,7 +2,7 @@
 /**
  * Plugin Name: eliemaps
  * Description: Affiche une carte Google maps.
- * Version: 1.0
+ * Version: 1.1
  * Author: Elie Deilhes
  * License: ---
  */
@@ -178,7 +178,11 @@ function eliemaps_savepost($post_id, $post){
 	}
 
 	if (isset($_POST['eliemaps_couleur_1'])) {
-		update_post_meta($post_id, '_couleur_1', $_POST['eliemaps_couleur_1']);
+		$couleur = $_POST['eliemaps_couleur_1'];
+		if (preg_match('#.*([0-9a-fA-F]{6})#', $couleur, $resultat)){
+			$valeur = '0x' . $resultat[1];
+			update_post_meta($post_id, '_couleur_1', $valeur);
+		}
 	}
 
 	if(isset($_POST['eliemaps_adresse_2'])) {
@@ -190,7 +194,11 @@ function eliemaps_savepost($post_id, $post){
 	}
 
 	if (isset($_POST['eliemaps_couleur_2'])) {
-		update_post_meta($post_id, '_couleur_2', $_POST['eliemaps_couleur_2']);
+		$couleur = $_POST['eliemaps_couleur_2'];
+		if (preg_match('#.*([0-9a-fA-F]{6})#', $couleur, $resultat)){
+			$valeur = '0x' . $resultat[1];
+			update_post_meta($post_id, '_couleur_2', $valeur);
+		}
 	}
 
 	if(isset($_POST['eliemaps_format'])) {
@@ -226,7 +234,7 @@ function eliemaps_column($column) {
 
 /* Affichage de la carte */
 function eliemaps_affiche($titre = ''){
-	$requete = new WP_query('post_type=eliemaps');
+	$requete = new WP_query('post_type=eliemaps', );
 	
 	if ($requete->have_posts()) {
 		$liste = $requete->get_posts();
